@@ -1,0 +1,164 @@
+ #include<iostream>
+#define MAX 10
+
+using namespace std;
+
+class Item
+{
+public:
+	int item,priority;
+	Item()
+	{
+		item=priority=0;
+	}
+	bool operator <=(const Item &a)
+	{
+		cout<<"working\n";
+		if(priority<a.priority)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	friend class Queue;
+};
+
+class Queue
+{
+	int front,rear;
+	Item *queue=new Item[MAX];
+public:
+	Queue()
+	{
+		front=rear=-1;
+	}
+	bool isFull()						//To check whether deque is full or not
+	{
+		if(rear==MAX-1)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	bool isEmpty()						//To check whether deque is empty or not
+	{
+		if(front==-1 or front==rear+1)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	Item input()
+	{
+		Item a;
+		cout<<"\nEnter item-";
+		cin>>a.item;
+		cout<<"Enter priority-";
+		cin>>a.priority;
+		return a;
+	}
+
+	void insert(Item item)
+	{
+		if(isFull()==1)
+		{
+			cout<<"\nOverflow!";
+		}
+		else if(isEmpty()==1)
+		{
+			front=0;
+			rear=0;
+			queue[rear]=item;
+		}
+		else
+		{
+			rear=rear+1;
+			int j=rear-1;
+			while(queue[j] <= item and j>=0)
+			{
+				queue[j+1]=queue[j];
+				j=j-1;
+			}
+			queue[j+1]=item;
+		}
+	}
+
+	void process_request()
+	{
+		if(isEmpty()==1)
+		{
+			cout<<"\nUnderflow";
+		}
+		else
+		{
+			cout<<"\nThe job with ID "<<queue[front].item<<" is processed!";
+			front=front+1;
+		}
+	}
+
+	void display()
+	{
+		if(isEmpty()==1)
+		{
+			cout<<"\nQueue is empty!";
+		}
+		else
+		{
+			for(int i=front;i<=rear;i++)
+			{
+				cout<<"("<<queue[i].item<<","<<queue[i].priority<<")-";
+			}
+		}
+	}
+};
+
+
+int main()
+{
+	Item a;
+	Queue q;
+	int ch=0;
+	while(ch!=4)
+	{
+		cout<<"\n**MENU**";
+		cout<<"\n1.Add job\n2.Process job\n3.Display job queue\n4.Exit";
+		cout<<"\nEnter your choice-"<<endl;
+		cin>>ch;
+		switch(ch)
+		{
+		case 1:
+		{
+			a=q.input();
+			q.insert(a);
+		}
+			break;
+		case 2:
+		{
+			q.process_request();
+		}
+			break;
+		case 3:
+		{
+			q.display();
+		}
+			break;
+		case 4:
+		{
+			cout<<"\nProcess finished!";
+		}
+			break;
+		}
+	}
+	return 0;
+}

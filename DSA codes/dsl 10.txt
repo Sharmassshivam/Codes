@@ -1,0 +1,236 @@
+ /*Implement C++ program for expression conversion as infix to postfix and its
+ evaluation using stack based on given conditions:
+1.Operands and operator, both must be single character.
+2.Input Postfix expression must be in a desired format.
+3.Only '+', '-', '' and '/ ' operators are expected.*/
+
+
+#include<iostream>
+#include<string>
+#define length 50
+using namespace std;
+
+template <typename T>
+class Stack
+{
+private:
+	int top;
+	T stack[length];
+	Stack()
+	{
+		top = -1;
+	}
+
+	bool isEmpty()
+	{
+		if(top==-1)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	bool isFull()
+	{
+		if(top==length-1)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	void push(T val)
+	{
+		if(isFull())
+		{
+			cout<<"Stack_overflow"<<endl;
+		}
+		else
+		{
+			top=top+1;
+			stack[top] = val;
+		}
+	}
+
+	T pop()
+	{
+		T item;
+		if(isEmpty())
+		{
+			cout<<"Stack_underflow"<<endl;
+		}
+		else
+		{
+			item=stack[top];
+			top=top-1;
+			return item;
+		}
+	}
+
+	T top_ofStack()
+	{
+		return(stack[top]);
+	}
+	friend class Expression;
+};
+
+class Expression
+{
+	char expression[length];
+public:
+	void input_expression()
+	{
+		cout<<"\nEnter the valid expression in infix form-";
+		cin>>expression;
+	}
+
+	bool isOperand(char C)
+	{
+		if((C >= '0' && C <= '9'))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	bool isOperator(char O)
+	{
+		if(O == '+' || O == '-' || O == '*' || O == '/' || O=='^')
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	string infix_to_postfix()
+	{
+		Stack<char> s;
+		string postfix = "";
+		for(int i = 0;i<len(expression);i++)
+		{
+			if(isOperator(expression[i]))
+			{
+				while(s.isEmpty()!=1 and s.top_ofStack()!='(' and precedence(expression[i]) <= precedence(s.top_ofStack()))
+				{
+					postfix = postfix + s.top_ofStack();
+					s.pop();
+				}
+				s.push(expression[i]);
+			}
+			else if(isOperand(expression[i])==true)
+			{
+				postfix = postfix + expression[i];
+			}
+
+			else if (expression[i] == '(')
+			{
+				s.push(expression[i]);
+			}
+
+			else if(expression[i] == ')')
+			{
+				while(s.isEmpty()!=1 and s.top_ofStack() !=  '(')
+				{
+					postfix = postfix + s.top_ofStack();
+					s.pop();
+				}
+				s.pop();
+			}
+		}
+		while(s.isEmpty()!=1)
+		{
+			postfix = postfix + s.top_ofStack();
+			s.pop();
+		}
+		return postfix;
+	}
+
+	int precedence(char op)
+	{
+		int weight = -1;
+		if(op=='+' || op=='-')
+		{
+			weight=1;
+		}
+		else if(op=='*' || op=='/')
+		{
+			weight=2;
+		}
+		return weight;
+	}
+
+	int len(string s)
+	{
+		int i=0;
+		while(s[i]!='\0')
+		{
+			i++;
+		}
+		return i;
+	}
+
+	int postfix_evaluation(string exp)
+	{
+			Stack<int> result;
+			for(int i=0;i<len(exp);i++)
+			{
+				if(isOperand(int(exp[i]))==true)
+				{
+					result.push(int(exp[i])-48);
+				}
+				else
+				{
+					int val1=result.pop();
+					int val2=result.pop();
+					switch(exp[i])
+					{
+					case '+':
+					{
+						result.push(val2+val1);
+					}
+					break;
+					case '-':
+					{
+						result.push(val2-val1);
+					}
+					break;
+					case '*':
+					{
+						result.push(val2*val1);
+					}
+					break;
+					case '/':
+					{
+						result.push(val2/val1);
+					}
+					break;
+					}
+				}
+			}
+			return result.top_ofStack();
+	}
+
+};
+
+int main()
+{
+	Expression exp;
+	exp.input_expression();
+	int result;
+	string postfix = exp.infix_to_postfix();
+	cout<<"\nPostfix form of given expression-"<<postfix<<"\n";
+	cout<<"\nEvaluation of postfix expression-:";
+	result=exp.postfix_evaluation(postfix);
+	cout<<result;
+}

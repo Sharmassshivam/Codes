@@ -1,0 +1,293 @@
+ #include<iostream>
+using namespace std;
+class node {
+
+    int data;
+    node* next;
+public:
+    node()
+    {
+        data = 0;
+        next = NULL;
+    }
+    node(int d)
+    {
+        data = d;
+        next = NULL;
+    }
+    friend class list;
+
+};
+
+class list {
+
+    node* start;
+public:
+    list()
+    {
+        start = NULL;
+    }
+    list(int d)
+    {
+        node* n = new node(d);
+        start = n;
+    }
+    void appendNode(int d)
+    {
+        node* n = new node(d);
+        if (start == NULL)
+            start = n;
+        else
+        {
+            node* temp = start;
+            while (temp->next != NULL)
+            {
+                temp = temp->next;
+            }
+            temp->next = n;
+        }
+
+    }
+    void beg(int d)
+    {
+        node* temp = new node(d);
+        if (start == NULL)
+            start = temp;
+        else
+        {
+            temp->next = start;
+            start = temp;
+        }
+    }
+    bool exists(int d)
+    {
+        node* temp = start;
+        while (temp != NULL)
+        {
+            if (temp->data == d)
+                return true;
+            temp = temp->next;
+        }
+        return false;
+    }
+    list operator &(list& b)
+    {
+        node* n = start;
+        list res;
+        while (n != NULL)
+        {
+            if (b.exists(n->data))
+                res.appendNode(n->data);
+            n = n->next;
+        }
+        return res;
+    }
+
+    list vorb(list& v, list& b)
+    {
+        node* temp = start;
+        list res;
+        while (temp != NULL)
+        {
+            if ((v.exists(temp->data) && !b.exists(temp->data)) || (!v.exists(temp->data) && b.exists(temp->data)))
+                res.appendNode(temp->data);
+            temp = temp->next;
+        }
+        return res;
+    }
+
+    unsigned int nvnb(list& v, list& b)
+    {
+        node* temp = start;
+        unsigned int res = 0;
+        while (temp != NULL)
+        {
+            if ((!v.exists(temp->data) && !b.exists(temp->data)))
+                res++;
+            temp = temp->next;
+        }
+        return res;
+    }
+    void addAfter(int d, int x)
+    {
+        node* n = new node(d);
+        node* temp = start;
+        while (temp->next != NULL)
+        {
+            if (temp->data == x)
+                break;
+            temp = temp->next;
+        }
+        n->next = temp->next;
+        temp->next = n;
+
+    }
+    void addBefore(int d, int x)
+    {
+        node* n = new node(d);
+        if (start->data == x)
+            beg(d);
+        else {
+            node* temp1 = start, * temp2 = start;
+            while (temp1->next != NULL)
+            {
+                if (temp1->data == x)
+                    break;
+                temp1 = temp1->next;
+            }
+            while (temp2->next != temp1)
+                temp2 = temp2->next;
+            n->next = temp2->next;
+            temp2->next = n;
+        }
+    }
+    void disp()
+    {
+        node* temp;
+        temp = start;
+        while (temp != NULL)
+        {
+            cout << temp->data << "->";
+            temp = temp->next;
+        }
+        cout << "Null";
+    }
+
+};
+
+int main()
+{
+    int bnum, bval, vnum, vval, cnum, cval;
+
+    cout << "\nCreating Class List:";
+    list c;
+    cout << "\nEnter the total students in class: ";
+    cin >> cnum;
+    for (int i = 0; i < cnum; i++)
+    {
+        cout << "\nEnter the student: ";
+        cin >> cval;
+        c.appendNode(cval);
+    }
+
+    int choice, d;
+
+    while (true)
+    {
+        cout << "\n\nClass list is: ";
+        c.disp();
+        cout << "\n\nAUXILARY OPERATIONS:";
+        cout << "\n1.Add at front";
+        cout << "\n2.Add after an element";
+        cout << "\n3.Add before an element";
+        cout << "\nEnter your choice(0 to EXIT): ";
+        cin >> choice;
+        if (choice == 0)
+        {
+            cout << "\nAUXILARY OPERATION TERMINATED";
+            break;
+        }
+        cout << "\nEnter the element to add: ";
+        cin >> d;
+
+
+        switch (choice)
+        {
+        case 1:c.beg(d);
+            break;
+
+        case 2: {int x;
+            cout << "\nEnter to add after: ";
+            cin >> x;
+            if (c.exists(x))
+                c.addAfter(d, x);
+            else
+                cout << "The element " << x << " is not in list: ";
+            break; }
+
+        case 3: {
+            int x;
+            cout << "\nEnter to add before: ";
+            cin >> x;
+            if (c.exists(x))
+                c.addBefore(d, x);
+            else
+                cout << "The element " << x << " is not in list: ";
+            break;
+        }
+        default:cout << "Wrong option, Please Try Again ";
+        }
+
+    }
+
+    cout << "\n\nCreating Butterscotch List:";
+    list b;
+    cout << "\nEnter the no. of students:";
+    cin >> bnum;
+    for (int i = 0; i < bnum; i++)
+    {
+        cout << "\nEnter the student: ";
+        cin >> bval;
+        if (c.exists(bval))
+            b.appendNode(bval);
+    }
+
+    cout << "\n\nCreating Vanilla List:";
+    list v;
+    cout << "\nEnter the no. of students:";
+    cin >> vnum;
+    for (int i = 0; i < vnum; i++)
+    {
+        cout << "\nEnter the student: ";
+        cin >> vval;
+        if (c.exists(vval))
+            v.appendNode(vval);
+    }
+    cout << "\n\nClass list is: ";
+    c.disp();
+    cout << "\n\nButterscotch list is: ";
+    b.disp();
+    cout << "\n\nVanilla list is: ";
+    v.disp();
+    while (true)
+    {
+        cout << "\n\nOPERATION MENU:";
+        cout << "\n1.Students who like both Vanilla and Butterscotch";
+        cout << "\n2.Students who like either Vanilla or Butterscotch or not both";
+        cout << "\n3.Number of students who like neither Vanilla nor Butterscotch";
+        int choice2;
+        cout << "\n\nEnter your choice(0 to Exit): ";
+        cin >> choice2;
+        if (choice2 == 0)
+        {
+            cout << "OPERATION TERMINATED!!!";
+            break;
+        }
+        switch (choice2)
+        {
+        case 1: {
+            list r1 = v & b;
+            cout << "\nStudents who like both Vanilla and Butterscotch are: ";
+            r1.disp();
+            break;
+        }
+        case 2: {
+            list r2 = c.vorb(v, b);
+            cout << "\nStudents who like either Vanilla or Butterscotch or not both are:";
+            r2.disp();
+            break;
+        }
+        case 3: {
+            cout << "\nNumber of students who like neither Vanilla nor Butterscotch are: ";
+            cout << c.nvnb(v, b);
+            break;
+        }
+        default: cout << "\nWrong Option Choosen";
+            cout << "\nPlease Try Again";
+            break;
+        }
+
+    }
+
+    return 0;
+}
