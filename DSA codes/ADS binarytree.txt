@@ -1,0 +1,435 @@
+ //============================================================================
+// Name        : trees.cpp
+// Author      : program
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include <iostream>
+#include<bits/stdc++.h>
+#define max 5
+using namespace std;
+class node{
+public:
+	int data;
+
+	node *left;
+	node*right;
+
+	node(int x){
+		data=x;
+		left=NULL;
+		right=NULL;
+	}
+	friend class bst;
+
+};
+class Queue
+{
+private:
+    node* queue[max];
+    int front,rear;
+public:
+    Queue();
+    bool isEmpty();
+    void add(node* j);
+    node* del();
+};
+
+Queue::Queue()
+{
+    front=-1;
+    rear=-1;
+}
+
+bool Queue::isEmpty(){
+    if (rear==-1 && front==-1)
+    {
+        return 1;
+    }
+    else{
+        return false;
+    }
+}
+void Queue::add(node* j){
+
+    if(rear==-1 && front==-1){
+        front=0;
+        queue[++rear]=j;
+    }
+    else{
+        queue[++rear]=j;
+    }
+}
+
+node* Queue::del(){
+    node* r;
+    if(rear == front){
+        r=queue[front];
+        rear =-1;
+        front=-1;
+    }
+    else{
+        r=queue[front];
+        front++;
+    }
+    return r;
+}
+class bst{
+ 
+	node *root;
+      public:
+	bst(){
+		root=NULL;
+	}
+ 
+	void operator =( bst &p){
+		 root=p.reroot();
+	}
+	void create(int x){
+
+		node *tem=new node(x);
+		if(root==NULL){
+			root=tem;
+		}
+		else{
+			node *p=root;int flag=0;
+			do{
+				char c;cout<<"Whether you would like to add data to the left of "<<p->data<<" or to the right of it\n";cin>>c;
+				if(c=='l'){
+					if(p->left==NULL){
+						p->left=tem;
+						flag=1;
+					}
+					else{
+						p=p->left;
+					}
+				}
+				else{
+					if(p->right==NULL){
+							p->right=tem;
+							flag=1;
+								}
+						else{
+								p=p->right;
+										}
+				}
+
+			}
+			while(flag==0);
+		}
+
+
+	}
+	void createTree(){
+        Queue q;
+        cout<<"enter root : ";
+        int x;
+        cin>>x;
+        node* p = new node(x);
+        q.add(p);
+        root=p;
+        while (!q.isEmpty())
+        {
+            
+            node* r = q.del();
+            cout<<"enter left child for "<<r->data<<" : ";
+            cin>>x;
+            if(x){
+            p = new node(x);
+            q.add(p);
+            r->left=p;}
+            cout<<"enter right child for "<<r->data<<" : ";
+            cin>>x;
+            if(x){
+            p = new node(x);
+            if(x) q.add(p);
+            r->right=p;}
+        }
+        
+    }
+	node *reroot(){
+		return root;
+	}
+	void preorrder(node *tem){
+		if(tem){
+		cout<<tem->data<<" ";
+		preorrder(tem->left);
+		preorrder(tem->right);}
+		return ;
+	}
+	void inorrder(node *tem){
+		if(tem){
+
+		inorrder(tem->left);
+		cout<<tem->data<<" ";
+		inorrder(tem->right);}
+		return ;
+	}
+	void postorrder(node *tem){
+		if(tem){
+		postorrder(tem->left);
+		postorrder(tem->right);
+		cout<<tem->data<<" ";
+		}
+		return ;
+	}
+	 int maxDepth(node* node) 
+{ 
+    if (node == NULL) 
+        return -1; 
+    else
+    { 
+         
+        int lDepth = maxDepth(node->left); 
+        int rDepth = maxDepth(node->right); 
+     
+         
+        if (lDepth > rDepth) 
+            return(lDepth + 1); 
+        else return(rDepth + 1); 
+    } 
+} 
+void mirror(node *temp)
+	{
+		if(temp==NULL)
+		{
+			return;
+		}
+		else
+		{
+			node *node;
+			mirror(temp->left);
+			mirror(temp->right);
+			node = temp->left;
+			temp->left = temp->right;
+			temp->right = node;
+
+		}
+	}
+  int getLeafCount( node* node)  
+{  
+    if(node == NULL)      
+        return 0;  
+    if(node->left == NULL && node->right == NULL)  
+        return 1;          
+    else
+        return getLeafCount(node->left)+  
+            getLeafCount(node->right);  
+}  
+  int countNonleaf(  node* tem) 
+{ 
+    
+    if (tem == NULL || (tem->left == NULL &&  
+                         tem->right == NULL)) 
+        return 0; 
+  
+    
+    return 1 + countNonleaf(tem->left) +  
+               countNonleaf(tem->right); 
+} 
+void eraseall(node *tem){
+	if(tem){
+		eraseall(tem->left);
+		eraseall(tem->right);
+		delete tem;
+	}
+	return;
+}
+ void eraseNodeFunc(node* p){
+        if(p){
+            
+            eraseNodeFunc(p->left);
+            eraseNodeFunc(p->right);
+            cout<<"\nenter value for node "<<p->data<<" : ";
+            int x;
+            cin>>x;
+            p->data=x;
+        }
+        return;
+    }
+	void nonrecurpreorder(node *p){
+		if(p==NULL){
+			cout<<"The tree is empty\n";
+		}
+		else{
+			stack<node *>q1;
+			q1.push(p);
+			node *tem=NULL;
+			while(!q1.empty()){
+                  tem=q1.top();
+				  q1.pop();
+				  cout<<tem->data<<" ";
+				  if(tem->right){
+					  q1.push(tem->right);
+				  }
+				  if(tem->left){
+					  q1.push(tem->left);
+				  }
+			}
+			cout<<endl;
+		}
+	}
+	void nonrecurinorder(node *p){
+		if(p==NULL){
+			cout<<"The tree is empty\n";
+		}
+		else{
+			stack<node *>q1;
+			node *tem=p;
+			int flag=1;
+			do{
+				while(p!=NULL){
+					q1.push(p);
+					p=p->left;
+				}
+				if(!q1.empty()){
+					tem=q1.top();
+					q1.pop();
+					cout<<tem->data<<" ";
+					p=tem->right;
+				}
+				else{
+					flag=0;
+				}
+
+			}
+			while(flag==1);
+		}
+	}
+	void nonrecurpostorder(node *p){
+		 stack<node*> st;
+    node *curr = p;
+    node *prev = NULL;
+    while (curr != NULL || !st.empty())
+    {
+        if (curr != NULL)
+        {
+            st.push(curr);
+            curr = curr->left;
+        }
+        else
+        {
+            curr = st.top();
+            if (curr->right == NULL || curr->right == prev)
+            {
+                cout << curr->data << " ";
+                st.pop();
+                prev = curr;
+                curr = NULL;
+            }
+            else
+                curr = curr->right;
+        }
+    }
+	}
+	int treeHeight(node *root) 
+{ 
+    
+    if (root == NULL) 
+        return 0; 
+  
+    
+    queue<node *> q; 
+  
+      
+    q.push(root); 
+    int height = 0; 
+  
+    while (1) 
+    { 
+         
+        int nodeCount = q.size(); 
+        if (nodeCount == 0) 
+            return height; 
+  
+        height++; 
+  
+         
+        while (nodeCount > 0) 
+        { 
+            node *node = q.front(); 
+            q.pop(); 
+            if (node->left != NULL) 
+                q.push(node->left); 
+            if (node->right != NULL) 
+                q.push(node->right); 
+            nodeCount--; 
+        } 
+    } 
+} 
+	 
+
+};
+int main(){
+     bst b1;
+     int ch;
+     do{
+    	 cout<<"1. To make a binary tree\n2. Preorder traversal\n3. Inorder traversal\n4. Postorder traversal\n5. Height\n6. Count of leaf node\n7. Count of internal node\n8.Erase all nodes\n9. Erasenode fun\n 10. Non recursive inorder\n11. Non recursive postorder\n12. Non recursive preorder\n13. Mirro tree";
+    	 cin>>ch;
+    	 switch(ch){
+    	 case 1:
+    		 while(true){ 
+    			 cout<<"Enter data of node or enter -1 to terminate\n";
+    			 int x;cin>>x;
+    			 if(x==-1){
+    				 break;
+    			 }
+    			 b1.create(x);}
+    			 break;
+    	 case 2:
+    		 b1.preorrder(b1.reroot());
+			 cout<<endl;
+    		 break;
+    	 case 3:
+    		 b1.inorrder(b1.reroot());
+			 cout<<endl;
+    		 break;
+    	 case 4: b1.postorrder( b1.reroot());
+		          cout<<endl;
+    	        break;
+    	 case 5:
+    		   cout<<b1.maxDepth(b1.reroot())<<endl;
+			 break;
+		case 6:
+		       cout<<b1.getLeafCount(b1.reroot())<<endl;
+			   break;
+		case 7:
+		   cout<<"The total number of non leaf node: "<<b1.countNonleaf(b1.reroot())<<endl;
+		   break;
+		case 8:
+		      b1.eraseall(b1.reroot());
+			  cout<<"Deleted all nodes of the tree\n";
+		case 9:
+                b1.mirror(b1.reroot());
+			  b1.inorrder(b1.reroot());
+			  
+			  break;
+		case 10:
+		        cout<<" Non Recursive inorder"<<endl;
+		         b1.nonrecurinorder(b1.reroot());
+				break;
+		case 11:
+		            cout<<" Non Recursive  postorder"<<endl;
+				 b1.nonrecurpostorder(b1.reroot());
+				break;
+		case 12:
+		       cout<<" Non recursive preorder "<<endl;
+		      b1.nonrecurpreorder(b1.reroot());
+			  break;
+		case 13:
+		  cout<<" Height of the tree  "<<b1.treeHeight(b1.reroot())-1<<endl;
+              break;
+		case 14:
+		    bst b2;
+			b2.createTree();
+
+    	 }
+		 
+		 
+		 }
+    	 while(ch!=15);
+
+      
+}
