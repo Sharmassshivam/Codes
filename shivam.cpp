@@ -8,12 +8,12 @@ using namespace std;
 
 void solve()
 {
-    ll height,p;
-    cin>>height>>p;
-    ll total=pow(2,height)-1;
+    ll anmol,p;
+    cin>>anmol>>p;
+    ll total=pow(2,anmol)-1;
     ll count=0;
     ll ans=0;
-    for(ll i=0;i<height;i++)
+    for(ll i=0;i<anmol;i++)
     {
         ll value=pow(2,i);
         if(value>p)
