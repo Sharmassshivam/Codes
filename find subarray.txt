@@ -3,7 +3,7 @@
 
 
 using namespace std;
-
+// changes
 int find(int a[],int n,int result){
   int left=0, right=0;
   int sum=0;
