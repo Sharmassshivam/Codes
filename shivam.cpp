@@ -1,43 +1,81 @@
-#include <bits/stdc++.h>
-#include<iostream>
-#define ll long long
-#define pi 3.1415926535897932384626
-#define mod 1e9+7
-#define endl "\n"
-
+#include<bits/stdc++.h>
+#include<omp.h>
 using namespace std;
 
-void solve()
-{
-    ll anmol,p;
-    cin>>anmol>>p;
-    ll total=pow(2,anmol)-1;
-    ll count=0;
-    ll ans=0;
-    for(ll i=0;i<anmol;i++)
-    {
-        ll value=pow(2,i);
-        if(value>p)
-         break;
-        count+=value;
-        ans++;
+ 
+ class Graph{
+  public:
+  int n;
+  vector<int>v1[6];
+  Graph(int n1){
+    n=n1;
+  }
+  void addedge(){
+    cout<<"Enter number of edges of graph\n";
+    int x;cin>>x;
+    for(int i=0;i<x;i++){
+      int x,y;cin>>x>>y;
+      v1[x].push_back(y);
+      v1[y].push_back(x);
     }
-    total=total-count;
-    if(total%p!=0)
-     ans++;
-    ans+=(total/p);
-    cout<<ans<<endl;
+
+    cout<<"Your graph is \n";
+    for(auto x:v1){
+      for(auto x1:x){
+        cout<<x1<<" ";
+      }
+      cout<<endl;
+    }
+    
+  }
+
+  void bfs(){
+    vector<int>visited(6,0);
+    queue<int>q1;
+    q1.push(0);
+    while(q1.size()){
+      int ans= q1.front();
+      q1.pop();
+      cout<<ans<<" ";
+      visited[ans]=1;
+      for(auto x : v1[ans]){
+        if(visited[x]==0){
+          q1.push(x);
+             visited[x]=1;
+        }
+         visited[x]=1;
+
+      }
+    }
+  }
+  void dfs(){
+     vector<int>visited(6,0);
+    stack<int>q1;
+    q1.push(0);
+    while(q1.size()){
+      int ans= q1.top();
+      q1.pop();
+      cout<<ans<<" ";
+      visited[ans]=1;
+      for(auto x : v1[ans]){
+        if(visited[x]==0){
+          q1.push(x);
+             visited[x]=1;
+        }
+         visited[x]=1;
+
+      }
+    }
+  }
+ };
+int main(){
+  
+ Graph g1(5);
+ g1.addedge();
+ cout<<"BFS :"<<endl;
+ g1.bfs();
+ g1.dfs();
+
 }
 
 
-
-int main()
-{
-   ll t;
-   cin>>t;
-   while(t--)
-   {
-       solve();
-   }
-   return 0;
-}
