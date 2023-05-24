@@ -1,81 +1,63 @@
-#include<bits/stdc++.h>
-#include<omp.h>
-using namespace std;
+#include <stdio.h>
 
- 
- class Graph{
-  public:
-  int n;
-  vector<int>v1[6];
-  Graph(int n1){
-    n=n1;
-  }
-  void addedge(){
-    cout<<"Enter number of edges of graph\n";
-    int x;cin>>x;
-    for(int i=0;i<x;i++){
-      int x,y;cin>>x>>y;
-      v1[x].push_back(y);
-      v1[y].push_back(x);
-    }
-
-    cout<<"Your graph is \n";
-    for(auto x:v1){
-      for(auto x1:x){
-        cout<<x1<<" ";
-      }
-      cout<<endl;
-    }
+// CUDA kernel to perform vector addition
+__global__ void vectorAddition(float* a, float* b, float* c, int size) {
+    int tid = blockIdx.x * blockDim.x + threadIdx.x;
     
-  }
-
-  void bfs(){
-    vector<int>visited(6,0);
-    queue<int>q1;
-    q1.push(0);
-    while(q1.size()){
-      int ans= q1.front();
-      q1.pop();
-      cout<<ans<<" ";
-      visited[ans]=1;
-      for(auto x : v1[ans]){
-        if(visited[x]==0){
-          q1.push(x);
-             visited[x]=1;
-        }
-         visited[x]=1;
-
-      }
+    if (tid < size) {
+        c[tid] = a[tid] + b[tid];
     }
-  }
-  void dfs(){
-     vector<int>visited(6,0);
-    stack<int>q1;
-    q1.push(0);
-    while(q1.size()){
-      int ans= q1.top();
-      q1.pop();
-      cout<<ans<<" ";
-      visited[ans]=1;
-      for(auto x : v1[ans]){
-        if(visited[x]==0){
-          q1.push(x);
-             visited[x]=1;
-        }
-         visited[x]=1;
-
-      }
-    }
-  }
- };
-int main(){
-  
- Graph g1(5);
- g1.addedge();
- cout<<"BFS :"<<endl;
- g1.bfs();
- g1.dfs();
-
 }
 
-
+int main() {
+    int size = 1000000;  // Size of the vectors
+    int numBytes = size * sizeof(float);
+    
+    // Allocate memory for the host vectors
+    float *h_a = (float*)malloc(numBytes);
+    float *h_b = (float*)malloc(numBytes);
+    float *h_c = (float*)malloc(numBytes);
+    
+    // Initialize the host vectors
+    for (int i = 0; i < size; i++) {
+        h_a[i] = i;
+        h_b[i] = i * 2;
+    }
+    
+    // Allocate memory for the device vectors
+    float *d_a, *d_b, *d_c;
+    cudaMalloc((void**)&d_a, numBytes);
+    cudaMalloc((void**)&d_b, numBytes);
+    cudaMalloc((void**)&d_c, numBytes);
+    
+    // Copy the host vectors to device memory
+    cudaMemcpy(d_a, h_a, numBytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_b, h_b, numBytes, cudaMemcpyHostToDevice);
+    
+    // Define the block and grid dimensions
+    int threadsPerBlock = 256;
+    int blocksPerGrid = (size + threadsPerBlock - 1) / threadsPerBlock;
+    
+    // Launch the vector addition kernel
+    vectorAddition<<<blocksPerGrid, threadsPerBlock>>>(d_a, d_b, d_c, size);
+    
+    // Copy the result vector from device to host
+    cudaMemcpy(h_c, d_c, numBytes, cudaMemcpyDeviceToHost);
+    
+    // Print the result
+    for (int i = 0; i < size; i++) {
+        printf("%.2f ", h_c[i]);
+    }
+    
+    // Free device memory
+    cudaFree(d_a);
+    cudaFree(d_b);
+    cudaFree(d_c);
+    
+    // Free host memory
+    free(h_a);
+    free(h_b);
+    free(h_c);
+    
+    return 0;
+}
